@@ -82,9 +82,11 @@ public class Conversions {
     @Override
     public ByteBuffer toBytes(BigDecimal value, Schema schema, LogicalType type) {
       int scale = ((LogicalTypes.Decimal) type).getScale();
-      if (scale != value.scale()) {
+      if (scale < value.scale()) {
         throw new AvroTypeException("Cannot encode decimal with scale " +
-            value.scale() + " as scale " + scale);
+                value.scale() + " as scale " + scale);
+      } else {
+        value = value.setScale(scale);
       }
       return ByteBuffer.wrap(value.unscaledValue().toByteArray());
     }
@@ -98,9 +100,11 @@ public class Conversions {
     @Override
     public GenericFixed toFixed(BigDecimal value, Schema schema, LogicalType type) {
       int scale = ((LogicalTypes.Decimal) type).getScale();
-      if (scale != value.scale()) {
+      if (scale < value.scale()) {
         throw new AvroTypeException("Cannot encode decimal with scale " +
-            value.scale() + " as scale " + scale);
+                value.scale() + " as scale " + scale);
+      } else {
+        value = value.setScale(scale);
       }
 
       byte fillByte = (byte) (value.signum() < 0 ? 0xFF : 0x00);

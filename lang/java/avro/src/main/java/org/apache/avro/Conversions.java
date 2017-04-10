@@ -103,9 +103,8 @@ public class Conversions {
       if (scale < value.scale()) {
         throw new AvroTypeException("Cannot encode decimal with scale " +
                 value.scale() + " as scale " + scale);
-      } else {
-        value = value.setScale(scale);
       }
+      value = value.setScale(scale);
 
       byte fillByte = (byte) (value.signum() < 0 ? 0xFF : 0x00);
       byte[] unscaled = value.unscaledValue().toByteArray();
